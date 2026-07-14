@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node build.js",
+  "outputDirectory": "dist",
+  "installCommand": "echo 'Sin dependencias npm: build.js solo usa modulos nativos de Node'"
+}
