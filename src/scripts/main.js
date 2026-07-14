@@ -1,6 +1,20 @@
 (function () {
   'use strict';
 
+  // ---------- Splash de entrada (home, una vez por sesión) ----------
+  var splash = document.querySelector('[data-intro-splash]');
+  if (splash && !splash.classList.contains('is-hidden')) {
+    var dismissSplash = function () {
+      if (splash.classList.contains('is-leaving') || splash.classList.contains('is-hidden')) return;
+      try { sessionStorage.setItem('gl_intro_seen', '1'); } catch (e) {}
+      splash.classList.add('is-leaving');
+      setTimeout(function () { splash.classList.add('is-hidden'); }, 550);
+    };
+    // Toca en cualquier sitio para saltárselo — quien llega con prisa no debe esperar.
+    splash.addEventListener('click', dismissSplash);
+    setTimeout(dismissSplash, 900);
+  }
+
   // ---------- Menú móvil ----------
   var toggle = document.querySelector('[data-menu-toggle]');
   var mobileNav = document.querySelector('[data-mobile-nav]');
@@ -94,16 +108,19 @@
     var LINE_COLOR = '197, 106, 60';
     var MAX_LINE_DIST = 150;
 
+    var EXTRA_BLEED = 140; // px de más por debajo del hero, para difuminarse hacia la siguiente seccion
     function sizeCanvas() {
       var rect = heroEl.getBoundingClientRect();
+      var h = rect.height + EXTRA_BLEED;
       particleCanvas.width = rect.width;
-      particleCanvas.height = rect.height;
-      var count = Math.min(90, Math.round((rect.width * rect.height) / 12000));
+      particleCanvas.height = h;
+      particleCanvas.style.height = h + 'px';
+      var count = Math.min(90, Math.round((rect.width * h) / 12000));
       particles = [];
       for (var i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * rect.width,
-          y: Math.random() * rect.height,
+          y: Math.random() * h,
           dx: (Math.random() - 0.5) * 0.3,
           dy: (Math.random() - 0.5) * 0.3,
           r: Math.random() * 1.6 + 1,
@@ -278,6 +295,18 @@
               },
             });
           }
+        }
+
+        // Parallax muy suave de las manchas de color de fondo — el mismo lenguaje que el
+        // colage del hero, para que las demás secciones no se sientan estáticas al lado.
+        if (!reduceMotion) {
+          document.querySelectorAll('.section-glow').forEach(function (el) {
+            gsap.fromTo(el, { '--blob-shift': '-30px' }, {
+              '--blob-shift': '30px',
+              ease: 'none',
+              scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
+            });
+          });
         }
 
         // Contadores de la franja de confianza (4,8 / 157 / 1988)

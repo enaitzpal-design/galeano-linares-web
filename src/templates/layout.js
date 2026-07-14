@@ -192,16 +192,41 @@ function cookieBannerHtml(lang) {
   </div>`;
 }
 
+// Splash de marca al entrar — solo en la home y una vez por sesión (sessionStorage), se
+// salta entero con prefers-reduced-motion. Corto a propósito (~900ms): es un saludo, no un
+// obstáculo para quien llega con una fuga y busca el teléfono.
+function introSplashHtml() {
+  return `<div class="intro-splash" data-intro-splash aria-hidden="true">
+    <div class="intro-splash-mark">
+      ${logoSvg()}
+      <span class="intro-splash-word">Galeano <span>&amp;</span> Linares</span>
+    </div>
+  </div>
+  <script>
+    // Síncrono a propósito (no defer): decide antes del primer pintado si ya se vio el
+    // splash en esta sesión, para que no haya ni un parpadeo en la segunda visita.
+    (function () {
+      try {
+        if (sessionStorage.getItem('gl_intro_seen')) {
+          document.querySelector('[data-intro-splash]').className += ' is-hidden';
+        }
+      } catch (e) {}
+    })();
+  </script>`;
+}
+
 function renderPage({ lang, slugForActive, title, description, canonicalPath, alternates, bodyHtml, jsonLdList, ogImage }) {
   const otherLang = UI[lang].otherLang.code;
   const otherAlt = (alternates || []).find((a) => a.hreflang === otherLang);
   const otherLangPath = otherAlt ? otherAlt.path : undefined;
+  const isHome = slugForActive === '';
   return `<!doctype html>
 <html lang="${lang}">
 <head>
 ${headHtml({ lang, title, description, canonicalPath, alternates, jsonLdList, ogImage })}
 </head>
 <body>
+  ${isHome ? introSplashHtml() : ''}
   <div class="cursor-glow" data-cursor-glow aria-hidden="true"></div>
   <a class="skip-link" href="#main">${UI[lang].skipToContent}</a>
   ${headerHtml(lang, slugForActive, otherLangPath)}

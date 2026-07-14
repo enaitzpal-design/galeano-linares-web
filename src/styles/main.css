@@ -26,8 +26,11 @@
   --error: #DC2626;
   --ok: #16A34A;
 
-  --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  /* Una sola familia para todo el sitio (títulos y cuerpo) — el mono queda solo para las
+     pocas cifras/etiquetas donde de verdad ayuda a leerlas como "dato" (brief: "misma
+     tipografía salvo donde sea muy necesario"). */
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Bricolage Grotesque', system-ui, -apple-system, sans-serif;
   --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 
   --fs-14: 0.875rem;
@@ -184,6 +187,31 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 
 .section-head { max-width: 640px; margin: 0 0 var(--sp-32); }
 .section-head--center { margin-inline: auto; text-align: center; }
+
+/* Manchas de color muy difuminadas para que las secciones sin colage (Serveis, Com
+   treballem, Zona, FAQ...) no se queden planas al lado del hero — el mismo recurso en
+   dosis pequeña, nunca una sección entera en terracota (regla 60/30/10 del brief). */
+.section-glow { position: relative; overflow: hidden; }
+.section-glow > .container { position: relative; z-index: 1; }
+.section-glow::before {
+  content: '';
+  position: absolute;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+  /* main.js anima esta variable con scroll (scrub) para un parallax muy suave */
+  transform: translateY(var(--blob-shift, 0px));
+}
+.section-glow--tr::before { top: -200px; right: -150px; background: radial-gradient(circle, var(--terracota) 0%, transparent 70%); }
+.section-glow--bl::before { bottom: -200px; left: -160px; background: radial-gradient(circle, var(--cobre) 0%, transparent 70%); }
+.section-glow--tl::before { top: -180px; left: -150px; background: radial-gradient(circle, var(--terracota-oscuro) 0%, transparent 70%); }
+@media (max-width: 640px) {
+  .section-glow::before { width: 300px; height: 300px; filter: blur(70px); }
+}
 
 /* Botones — áreas táctiles >= 44px */
 .btn {
@@ -343,11 +371,16 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
    pausada fuera de pantalla y desactivada con prefers-reduced-motion o en móvil pequeño. */
 .hero-particles {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   z-index: 0;
   width: 100%;
+  /* El alto real (más que el hero) lo fija main.js al dimensionar el canvas, para que se
+     difumine hasta la franja de confianza en vez de cortarse en seco al final del hero. */
   height: 100%;
   display: block;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 75%, transparent 100%);
 }
 @media (max-width: 640px) {
   .hero-particles { display: none; }
@@ -437,9 +470,18 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 .hero-card-label { font-size: var(--fs-14); color: var(--tinta-suave); font-weight: 500; }
 .hero-card-avatars { display: flex; gap: 6px; margin-bottom: 4px; }
 
-.hero-collage-card--rating { top: -4%; left: -6%; rotate: -6deg; padding: var(--sp-12) var(--sp-20); }
+/* Las dos tarjetas que se apoyan en el borde de la imagen (4,8★ y 1988): radio de esquina
+   más suave (a tono con los 32px del panel), giro casi paralelo al del panel (-3deg) en vez
+   de contrario, y un anillo/sombra que recoge el tono cobre del fondo — para que parezca
+   que nacen del panel en vez de quedar pegadas encima como una pegatina. */
+.hero-collage-card--edge {
+  border-radius: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-float), 0 0 0 1px rgba(169, 85, 46, 0.16);
+}
+.hero-collage-card--rating { top: -5%; left: -7%; rotate: -4deg; padding: var(--sp-12) var(--sp-20); }
 .hero-collage-card--rating .hero-card-figure { font-size: var(--fs-40); }
-.hero-collage-card--since { bottom: 6%; right: -8%; rotate: 5deg; }
+.hero-collage-card--since { bottom: 7%; right: -7%; rotate: -1deg; }
 .hero-collage-card--people { bottom: -6%; left: 12%; rotate: -3deg; flex-direction: row; align-items: center; gap: var(--sp-12); }
 .hero-collage-card--people .hero-card-label { font-family: var(--font-display); font-weight: 700; color: var(--tinta); font-size: var(--fs-16); }
 
@@ -451,7 +493,14 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 }
 
 /* ---------- Trust strip ---------- */
-.trust-strip { background: var(--crema-2); padding: var(--sp-32) 0; }
+/* Transición suave desde el hero en vez de un corte de color seco: el degradado se come
+   los primeros ~90px y la red de partículas del hero se difumina hasta aquí (ver
+   .hero-particles más abajo) para que la siguiente sección no empiece de golpe. */
+.trust-strip {
+  position: relative;
+  background: linear-gradient(to bottom, var(--crema) 0, var(--crema-2) 90px, var(--crema-2) 100%);
+  padding: var(--sp-32) 0;
+}
 .trust-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -527,7 +576,11 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   max-width: 640px;
   margin: 0 auto;
 }
-.review-stars { color: var(--cobre); font-size: var(--fs-32); margin-bottom: var(--sp-8); font-family: var(--font-mono); font-weight: 700; }
+.review-stars { display: flex; align-items: center; justify-content: center; gap: var(--sp-8); margin-bottom: var(--sp-16); flex-wrap: wrap; }
+.star-rating { display: inline-flex; gap: 4px; color: var(--cobre); }
+.star-icon { width: 28px; height: 28px; }
+.star-icon--empty { color: rgba(184, 115, 51, 0.35); }
+.review-stars-figure { font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-24); color: var(--cobre); }
 
 /* ---------- People ---------- */
 .people-block { display: grid; grid-template-columns: 1fr; gap: var(--sp-32); align-items: center; }
@@ -762,4 +815,39 @@ body { padding-bottom: var(--mobile-bar-h); }
 .cursor-glow.is-active { opacity: 1; }
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
   .cursor-glow { display: none; }
+}
+
+/* ---------- Splash de entrada (solo home, una vez por sesión) ---------- */
+.intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,0.18), transparent 55%),
+    linear-gradient(150deg, #C56A3C 0%, #A9552E 50%, #7a3c20 100%);
+}
+.intro-splash-mark { display: flex; align-items: center; gap: var(--sp-12); }
+.intro-splash-mark .logo-mark { width: 48px; height: 48px; }
+.intro-splash-word {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-32);
+  color: var(--crema);
+  letter-spacing: -0.02em;
+}
+.intro-splash-word span { color: rgba(250,246,238,0.7); }
+.intro-splash.is-hidden { display: none; }
+.intro-splash.is-leaving {
+  animation: introSplashOut 0.5s var(--ease-standard) forwards;
+}
+@keyframes introSplashOut {
+  from { opacity: 1; }
+  to { opacity: 0; visibility: hidden; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .intro-splash { display: none; }
 }

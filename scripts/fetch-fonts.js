@@ -1,12 +1,13 @@
-// Auto-aloja Bricolage Grotesque, Inter e IBM Plex Mono: descarga los woff2 (solo los
-// subsets latin/latin-ext, que cubren catalán y castellano) y genera @font-face locales.
-// Motivo: Lighthouse marcó la hoja de Google Fonts como render-blocking (~870ms de LCP) y
-// auto-alojar evita además la transferencia de IP a servidores de Google (RGPD).
+// Auto-aloja Bricolage Grotesque (única tipografía del sitio, títulos y cuerpo) e IBM Plex
+// Mono (solo para las pocas cifras/etiquetas donde de verdad aporta: brief pide "una misma
+// tipografía salvo donde sea muy necesario"). Descarga los woff2 (subsets latin/latin-ext,
+// catalán+castellano) y genera @font-face locales — evita además la petición render-blocking
+// y la transferencia de IP a Google (RGPD).
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const CSS_URL = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;700&display=swap';
+const CSS_URL = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap';
 const FONTS_DIR = path.join(__dirname, '..', 'src', 'assets', 'fonts');
 const OUT_CSS = path.join(__dirname, '..', 'src', 'styles', 'fonts.css');
 const KEEP_SUBSETS = new Set(['latin', 'latin-ext']);

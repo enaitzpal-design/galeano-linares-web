@@ -13,6 +13,12 @@ const HOME = {
       eyebrow: 'El que fem',
       title: 'Agua i calor: l’ofici sencer',
     },
+    reviews: {
+      eyebrow: 'Ens avalen',
+      title: '4,8★ amb 157 opinions de veïns de Mataró',
+      text: 'No inventem testimonis. La millor prova és el que diuen 157 veïns al nostre perfil de Google — pots llegir-los tots, amb nom i data.',
+      cta: 'Veure totes les opinions a Google',
+    },
     howWeWork: {
       eyebrow: 'Com treballem',
       title: 'El pressupost, abans de tocar res',
@@ -58,6 +64,12 @@ const HOME = {
     services: {
       eyebrow: 'Lo que hacemos',
       title: 'Agua y calor: el oficio completo',
+    },
+    reviews: {
+      eyebrow: 'Nos avalan',
+      title: '4,8★ con 157 reseñas de vecinos de Mataró',
+      text: 'No inventamos testimonios. La mejor prueba es lo que dicen 157 vecinos en nuestro perfil de Google — puedes leerlos todos, con nombre y fecha.',
+      cta: 'Ver todas las reseñas en Google',
     },
     howWeWork: {
       eyebrow: 'Cómo trabajamos',

@@ -21,4 +21,27 @@ function icon(name, extraClass) {
   return `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${body}</svg>`;
 }
 
-module.exports = { icon, ICONS };
+// Fila de estrellas que representa la puntuación real (p. ej. 4,8 → 4 llenas + una al 80%),
+// en vez de redondear a 5 llenas — "añade la cantidad de estrellas que tiene".
+let starGradSeq = 0;
+function starRating(value) {
+  const full = Math.floor(value);
+  const pct = Math.round((value - full) * 100);
+  let out = '';
+  for (let i = 0; i < 5; i++) {
+    if (i < full) {
+      out += `<svg class="icon star-icon star-icon--full" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${ICONS.star.match(/d="([^"]+)"/)[1]}" fill="currentColor" stroke="none"/></svg>`;
+    } else if (i === full && pct > 0) {
+      const id = 'starGrad' + (starGradSeq++);
+      out += `<svg class="icon star-icon star-icon--partial" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <defs><linearGradient id="${id}"><stop offset="${pct}%" stop-color="currentColor"/><stop offset="${pct}%" stop-color="transparent"/></linearGradient></defs>
+        <path d="${ICONS.star.match(/d="([^"]+)"/)[1]}" fill="url(#${id})" stroke="currentColor" stroke-width="1.5"/>
+      </svg>`;
+    } else {
+      out += `<svg class="icon star-icon star-icon--empty" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${ICONS.star.match(/d="([^"]+)"/)[1]}" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>`;
+    }
+  }
+  return `<span class="star-rating">${out}</span>`;
+}
+
+module.exports = { icon, starRating, ICONS };

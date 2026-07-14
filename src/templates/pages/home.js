@@ -4,7 +4,7 @@ const { HOME } = require('../../content/home');
 const { FAQ } = require('../../content/faq');
 const { renderPage } = require('../layout');
 const { pagePath, zonePath, waLink, telLink } = require('../../lib/urls');
-const { icon } = require('../icons');
+const { icon, starRating } = require('../icons');
 const { heroCollage, avatarInitials } = require('../graphics');
 const { localBusinessSchema, faqSchema } = require('../../lib/schema');
 
@@ -42,7 +42,7 @@ function renderHome(lang) {
     </div>
   </section>
 
-  <section class="section" id="serveis">
+  <section class="section section-glow section-glow--tr" id="serveis">
     <div class="container">
       <div class="section-head section-head--center">
         <span class="eyebrow">${h.services.eyebrow}</span>
@@ -60,7 +60,21 @@ function renderHome(lang) {
     </div>
   </section>
 
-  <section class="section">
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head section-head--center">
+        <span class="eyebrow">${h.reviews.eyebrow}</span>
+        <h2>${h.reviews.title}</h2>
+      </div>
+      <div class="review-card" data-reveal>
+        <div class="review-stars">${starRating(parseFloat(SITE.ratingValue))}<span class="review-stars-figure">${SITE.rating} / 5</span></div>
+        <p>${h.reviews.text}</p>
+        <a class="btn btn--primary" href="${SITE.googleReviewsUrl}" target="_blank" rel="noopener">${h.reviews.cta}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-glow section-glow--bl">
     <div class="container">
       <div class="section-head section-head--center">
         <span class="eyebrow">${h.howWeWork.eyebrow}</span>
@@ -94,20 +108,20 @@ function renderHome(lang) {
     </div>
   </section>
 
-  <section class="section" id="zona">
+  <section class="section section-glow section-glow--tl" id="zona">
     <div class="container">
       <div class="section-head section-head--center">
         <span class="eyebrow">${h.zone.eyebrow}</span>
         <h2>${h.zone.title}</h2>
         <p class="text-center">${h.zone.text}</p>
       </div>
-      <ul class="town-list" style="justify-content:center">
-        ${TOWNS.map((town) => `<li><a class="town-pill" href="${zonePath(lang, town.slug)}">${icon('pin')}${town[lang]}</a></li>`).join('')}
+      <ul class="town-list" style="justify-content:center" data-reveal-group>
+        ${TOWNS.map((town) => `<li data-reveal><a class="town-pill" href="${zonePath(lang, town.slug)}">${icon('pin')}${town[lang]}</a></li>`).join('')}
       </ul>
     </div>
   </section>
 
-  <section class="section section--alt" id="faq">
+  <section class="section section--alt section-glow section-glow--tr" id="faq">
     <div class="container">
       <div class="section-head section-head--center">
         <span class="eyebrow">${h.faqShort.eyebrow}</span>

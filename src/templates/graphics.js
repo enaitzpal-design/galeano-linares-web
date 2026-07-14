@@ -15,10 +15,10 @@ function heroCollage({ rating, since, founders, lang }) {
   return `<div class="hero-collage">
     <div class="hero-collage-backdrop">${slides}
     </div>
-    <div class="hero-collage-card hero-collage-card--rating" data-reveal>
+    <div class="hero-collage-card hero-collage-card--edge hero-collage-card--rating" data-reveal>
       <strong class="hero-card-figure">${rating}★</strong>
     </div>
-    <div class="hero-collage-card hero-collage-card--since" data-reveal>
+    <div class="hero-collage-card hero-collage-card--edge hero-collage-card--since" data-reveal>
       <strong class="hero-card-figure">${since}</strong>
       <span class="hero-card-label">${isEs ? 'Desde' : 'Des de'}</span>
     </div>
