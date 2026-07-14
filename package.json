@@ -1,0 +1,19 @@
+{
+  "name": "cabal-mataro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web de Cabal — Fontaneria i Calefacció a Mataró",
+  "scripts": {
+    "build": "node build.js",
+    "serve": "node scripts/serve.js",
+    "screenshots": "node scripts/screenshots.js",
+    "qa": "node scripts/qa-playwright.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.61.1",
+    "puppeteer": "^25.3.0"
+  },
+  "allowScripts": {
+    "puppeteer@25.3.0": true
+  }
+}

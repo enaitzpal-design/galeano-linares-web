@@ -1,0 +1,6 @@
+node_modules/
+dist/
+npm-debug.log*
+
+# Capturas de referencia sueltas que se pegan en la raíz durante el trabajo, no son parte del sitio
+/Screenshot *.png
