@@ -87,26 +87,26 @@
     var pCtx = particleCanvas.getContext('2d');
     var heroEl = particleCanvas.closest('.hero');
     var particles = [];
-    var pMouse = { x: null, y: null, radius: 110 };
+    var pMouse = { x: null, y: null, radius: 140 };
     var particlesRunning = false;
     var particlesRafId = null;
-    var DOT_COLOR = 'rgba(184, 115, 51, 0.4)';
+    var DOT_COLOR = 'rgba(184, 115, 51, 0.55)';
     var LINE_COLOR = '197, 106, 60';
-    var MAX_LINE_DIST = 120;
+    var MAX_LINE_DIST = 150;
 
     function sizeCanvas() {
       var rect = heroEl.getBoundingClientRect();
       particleCanvas.width = rect.width;
       particleCanvas.height = rect.height;
-      var count = Math.min(46, Math.round((rect.width * rect.height) / 22000));
+      var count = Math.min(90, Math.round((rect.width * rect.height) / 12000));
       particles = [];
       for (var i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * rect.width,
           y: Math.random() * rect.height,
-          dx: (Math.random() - 0.5) * 0.25,
-          dy: (Math.random() - 0.5) * 0.25,
-          r: Math.random() * 1.4 + 1,
+          dx: (Math.random() - 0.5) * 0.3,
+          dy: (Math.random() - 0.5) * 0.3,
+          r: Math.random() * 1.6 + 1,
         });
       }
     }
@@ -145,7 +145,7 @@
           var ddy = particles[a].y - particles[b].y;
           var d = Math.sqrt(ddx * ddx + ddy * ddy);
           if (d < MAX_LINE_DIST) {
-            var alpha = (1 - d / MAX_LINE_DIST) * 0.18;
+            var alpha = (1 - d / MAX_LINE_DIST) * 0.26;
             pCtx.strokeStyle = 'rgba(' + LINE_COLOR + ', ' + alpha.toFixed(3) + ')';
             pCtx.lineWidth = 1;
             pCtx.beginPath();
