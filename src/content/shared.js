@@ -11,7 +11,11 @@ const SITE = {
   since: 1988,
   rating: '4,8',
   ratingValue: '4.8',
+  // reviewCount: cifra real, solo para datos estructurados (schema.org) — Google valida que
+  // sea numérico. En todo el texto visible se muestra reviewCountDisplay ("150+"), a
+  // petición del cliente, para no comprometerse a un número exacto que cambia.
   reviewCount: 157,
+  reviewCountDisplay: '150+',
   founders: ['Félix Galeano', 'Ramón Linares'],
   googleReviewsUrl: 'https://www.google.com/search?q=Galeano+%26+Linares+Fontaneria+Matar%C3%B3+opinions',
   instagram: '', // pendiente — handle de redes por decidir, brief §11.2

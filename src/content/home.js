@@ -1,7 +1,7 @@
 const HOME = {
   ca: {
     metaTitle: 'Galeano & Linares · Fontaneria i Calefacció a Mataró — Lampistes des de 1988',
-    metaDescription: 'El lampista de confiança de Mataró, des de 1988. Fuites, calderes, calefacció i reformes. 4,8★ amb 157 opinions de Google. Truca o escriu per WhatsApp.',
+    metaDescription: 'El lampista de confiança de Mataró, des de 1988. Fuites, calderes, calefacció i reformes. 4,8★ amb 150+ opinions de Google. Truca o escriu per WhatsApp.',
     hero: {
       eyebrow: 'Lampistes a Mataró des de 1988',
       h1: 'El lampista de confiança de Mataró. Des de 1988.',
@@ -15,8 +15,8 @@ const HOME = {
     },
     reviews: {
       eyebrow: 'Ens avalen',
-      title: '4,8★ amb 157 opinions de veïns de Mataró',
-      text: 'No inventem testimonis. La millor prova és el que diuen 157 veïns al nostre perfil de Google — pots llegir-los tots, amb nom i data.',
+      title: '4,8★ amb 150+ opinions de veïns de Mataró',
+      text: 'No inventem testimonis. La millor prova és el que diuen 150+ veïns al nostre perfil de Google — pots llegir-los tots, amb nom i data.',
       cta: 'Veure totes les opinions a Google',
     },
     howWeWork: {
@@ -53,7 +53,7 @@ const HOME = {
   },
   es: {
     metaTitle: 'Galeano & Linares · Fontanería y Calefacción en Mataró — Lampistas desde 1988',
-    metaDescription: 'El lampista de confianza de Mataró, desde 1988. Fugas, calderas, calefacción y reformas. 4,8★ con 157 reseñas de Google. Llama o escribe por WhatsApp.',
+    metaDescription: 'El lampista de confianza de Mataró, desde 1988. Fugas, calderas, calefacción y reformas. 4,8★ con 150+ reseñas de Google. Llama o escribe por WhatsApp.',
     hero: {
       eyebrow: 'Lampistas en Mataró desde 1988',
       h1: 'El lampista de confianza de Mataró. Desde 1988.',
@@ -67,8 +67,8 @@ const HOME = {
     },
     reviews: {
       eyebrow: 'Nos avalan',
-      title: '4,8★ con 157 reseñas de vecinos de Mataró',
-      text: 'No inventamos testimonios. La mejor prueba es lo que dicen 157 vecinos en nuestro perfil de Google — puedes leerlos todos, con nombre y fecha.',
+      title: '4,8★ con 150+ reseñas de vecinos de Mataró',
+      text: 'No inventamos testimonios. La mejor prueba es lo que dicen 150+ vecinos en nuestro perfil de Google — puedes leerlos todos, con nombre y fecha.',
       cta: 'Ver todas las reseñas en Google',
     },
     howWeWork: {

@@ -22,7 +22,7 @@ const UI = {
       sendForm: 'Enviar i obrir WhatsApp',
     },
     trustStrip: {
-      rating: `${'4,8'}★ · 157 opinions de Google`,
+      rating: `${'4,8'}★ · 150+ opinions de Google`,
       since: 'Des de 1988',
       founders: 'Félix Galeano i Ramón Linares',
       area: 'Mataró i el Maresme',
@@ -76,7 +76,7 @@ const UI = {
       sendForm: 'Enviar y abrir WhatsApp',
     },
     trustStrip: {
-      rating: '4,8★ · 157 reseñas de Google',
+      rating: '4,8★ · 150+ reseñas de Google',
       since: 'Desde 1988',
       founders: 'Félix Galeano y Ramón Linares',
       area: 'Mataró y el Maresme',

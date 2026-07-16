@@ -1,17 +1,19 @@
-const { icon } = require('./icons');
-
-// Colage de tarjetas para el hero — sin fotos reales todavía (brief §4/§11.5), así que en
-// vez de fingir una foto o usar un icono plano se construye un pequeño "mosaico de pruebas"
-// con profundidad real (capas, rotación, grano, sombra cálida): datos verdaderos, no una
-// imagen inventada. El panel de fondo cicla en solitario entre los cuatro oficios (agua,
-// calor, obra, comunitats) — animado, pero siguen siendo gráficos propios, no fotos falsas.
-const SLIDE_ICONS = ['drop', 'flame', 'wrench', 'building'];
+// Colage de tarjetas para el hero: el panel de fondo cicla en solitario entre cuatro fotos
+// reales de oficio (agua, calor, obra, comunitats) que aportó el cliente — recortadas a
+// cuadrado y comprimidas (scripts/process-hero-photos.js). Encima, un par de tarjetas con
+// datos verdaderos (valoración, año, las personas) en vez de texto sobre la foto.
+const SLIDE_PHOTOS = [
+  { file: 'hero-agua.jpg', alt: 'Canonades i vàlvules de fontaneria' },
+  { file: 'hero-calor.jpg', alt: 'Radiador de calefacció' },
+  { file: 'hero-obra.jpg', alt: 'Eines de lampista per a reformes' },
+  { file: 'hero-comunitats.jpg', alt: 'Instal·lacions d’un edifici de comunitat de veïns' },
+];
 
 function heroCollage({ rating, since, founders, lang }) {
   const isEs = lang === 'es';
   const initials = founders.map(avatarInitials);
-  const slides = SLIDE_ICONS.map((name, i) => `
-      <div class="hero-slide hero-slide--${i + 1}">${icon(name, 'hero-slide-icon')}</div>`).join('');
+  const slides = SLIDE_PHOTOS.map((p, i) => `
+      <div class="hero-slide hero-slide--${i + 1}"><img src="/assets/images/hero/${p.file}" alt="${p.alt}" loading="${i === 0 ? 'eager' : 'lazy'}" width="960" height="960"></div>`).join('');
   return `<div class="hero-collage">
     <div class="hero-collage-backdrop">${slides}
     </div>

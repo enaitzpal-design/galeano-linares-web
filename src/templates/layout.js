@@ -135,7 +135,7 @@ function footerHtml(lang, otherLangPath) {
             <span class="logo-word" style="color:#fff">Galeano <span>&amp;</span> Linares</span>
           </div>
           <p>${t.footer.madeWith}</p>
-          <p class="mono-figure mono-figure--on-dark">${SITE.rating}★ · ${SITE.reviewCount} ${lang === 'es' ? 'reseñas' : 'opinions'}</p>
+          <p class="mono-figure mono-figure--on-dark">${SITE.rating}★ · ${SITE.reviewCountDisplay} ${lang === 'es' ? 'reseñas' : 'opinions'}</p>
         </div>
         <div>
           <h3>${t.nav.services}</h3>

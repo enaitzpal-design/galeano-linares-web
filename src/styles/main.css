@@ -424,21 +424,24 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 .hero-slide {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
 }
 .hero-slide:first-child { opacity: 1; }
-.hero-slide-icon {
-  width: 42%;
-  height: 42%;
-  color: rgba(250,246,238,0.55);
-  stroke-width: 1.2;
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
-.hero-slide--2 { background: linear-gradient(150deg, #c9773f 0%, #96481f 55%, #5c2c13 100%); }
-.hero-slide--3 { background: linear-gradient(150deg, #b8733a 0%, #8a4525 55%, #542a16 100%); }
-.hero-slide--4 { background: linear-gradient(150deg, #d17f43 0%, #a9552e 55%, #6b3419 100%); }
+.hero-slide::after {
+  /* Veladura cálida sobre cada foto para que las cuatro (con luces y colores distintos)
+     se lean como una misma familia de marca, no como fotos de stock sueltas. */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(150deg, rgba(197,106,60,0.55) 0%, rgba(122,60,32,0.6) 100%);
+  mix-blend-mode: color;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .hero-slide {
@@ -458,7 +461,7 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   position: absolute;
   background: var(--blanco);
   border-radius: var(--radius-card);
-  padding: var(--sp-16) var(--sp-24);
+  padding: var(--sp-12) var(--sp-16);
   box-shadow: var(--shadow-float);
   display: flex;
   flex-direction: column;
@@ -466,30 +469,30 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   transition: transform 0.4s var(--ease-spring), box-shadow 0.4s var(--ease-standard);
 }
 .hero-collage-card:hover { transform: scale(1.04) rotate(0deg) !important; box-shadow: var(--shadow-card-hover); }
-.hero-card-figure { font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-32); color: var(--cobre); line-height: 1; }
-.hero-card-label { font-size: var(--fs-14); color: var(--tinta-suave); font-weight: 500; }
-.hero-card-avatars { display: flex; gap: 6px; margin-bottom: 4px; }
+.hero-card-figure { font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-24); color: var(--cobre); line-height: 1; }
+.hero-card-label { font-size: 12px; color: var(--tinta-suave); font-weight: 500; }
+.hero-card-avatars { display: flex; gap: 5px; margin-bottom: 3px; }
 
 /* Las dos tarjetas que se apoyan en el borde de la imagen (4,8★ y 1988): radio de esquina
    más suave (a tono con los 32px del panel), giro casi paralelo al del panel (-3deg) en vez
    de contrario, y un anillo/sombra que recoge el tono cobre del fondo — para que parezca
    que nacen del panel en vez de quedar pegadas encima como una pegatina. */
 .hero-collage-card--edge {
-  border-radius: 20px;
+  border-radius: 16px;
   border: 2px solid rgba(255, 255, 255, 0.7);
   box-shadow: var(--shadow-float), 0 0 0 1px rgba(169, 85, 46, 0.16);
 }
-.hero-collage-card--rating { top: -5%; left: -7%; rotate: -4deg; padding: var(--sp-12) var(--sp-24); }
-.hero-collage-card--rating .hero-card-figure { font-size: var(--fs-40); }
+.hero-collage-card--rating { top: -5%; left: -7%; rotate: -4deg; padding: var(--sp-8) var(--sp-16); }
+.hero-collage-card--rating .hero-card-figure { font-size: var(--fs-32); }
 .hero-collage-card--since { bottom: 7%; right: -7%; rotate: -1deg; }
-.hero-collage-card--people { bottom: -6%; left: 12%; rotate: -3deg; flex-direction: row; align-items: center; gap: var(--sp-12); }
-.hero-collage-card--people .hero-card-label { font-family: var(--font-display); font-weight: 700; color: var(--tinta); font-size: var(--fs-16); }
+.hero-collage-card--people { bottom: -6%; left: 12%; rotate: -3deg; flex-direction: row; align-items: center; gap: var(--sp-8); }
+.hero-collage-card--people .hero-card-label { font-family: var(--font-display); font-weight: 700; color: var(--tinta); font-size: var(--fs-14); }
 
 @media (max-width: 480px) {
   .hero-collage { max-width: 340px; }
-  .hero-collage-card { padding: var(--sp-12) var(--sp-16); }
-  .hero-card-figure { font-size: var(--fs-24); }
-  .hero-collage-card--rating .hero-card-figure { font-size: var(--fs-32); }
+  .hero-collage-card { padding: var(--sp-8) var(--sp-12); }
+  .hero-card-figure { font-size: var(--fs-18); }
+  .hero-collage-card--rating .hero-card-figure { font-size: var(--fs-24); }
 }
 
 /* ---------- Trust strip ---------- */
@@ -600,10 +603,10 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   box-shadow: var(--shadow-soft);
 }
 .avatar-monogram--sm {
-  width: 32px; height: 32px;
-  font-size: var(--fs-14);
+  width: 26px; height: 26px;
+  font-size: 12px;
   border-width: 2px;
-  margin-left: -10px;
+  margin-left: -8px;
 }
 .avatar-monogram--sm:first-child { margin-left: 0; }
 .avatar-monogram--lg {

@@ -24,7 +24,7 @@ function renderOpinions(lang) {
     <div class="container">
       <div class="review-card" data-reveal>
         <div class="review-stars">${starRating(parseFloat(SITE.ratingValue))}<span class="review-stars-figure">${SITE.rating} / 5</span></div>
-        <p>${SITE.reviewCount} ${lang === 'es' ? 'reseñas verificables en Google Business' : 'opinions verificables a Google Business'}</p>
+        <p>${SITE.reviewCountDisplay} ${lang === 'es' ? 'reseñas verificables en Google Business' : 'opinions verificables a Google Business'}</p>
         <a class="btn btn--primary" href="${SITE.googleReviewsUrl}" target="_blank" rel="noopener">${o.ctaBig}</a>
       </div>
     </div>

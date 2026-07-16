@@ -4,3 +4,7 @@ npm-debug.log*
 
 # Capturas de referencia sueltas que se pegan en la raíz durante el trabajo, no son parte del sitio
 /Screenshot *.png
+
+# Fotos originales sin procesar (varios MB cada una) — las versiones optimizadas que usa
+# el sitio viven en src/assets/images/hero/, generadas con scripts/process-hero-photos.js
+/Fotos hero/
