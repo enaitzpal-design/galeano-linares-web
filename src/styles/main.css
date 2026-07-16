@@ -458,7 +458,7 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   position: absolute;
   background: var(--blanco);
   border-radius: var(--radius-card);
-  padding: var(--sp-16) var(--sp-20);
+  padding: var(--sp-16) var(--sp-24);
   box-shadow: var(--shadow-float);
   display: flex;
   flex-direction: column;
@@ -479,7 +479,7 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   border: 2px solid rgba(255, 255, 255, 0.7);
   box-shadow: var(--shadow-float), 0 0 0 1px rgba(169, 85, 46, 0.16);
 }
-.hero-collage-card--rating { top: -5%; left: -7%; rotate: -4deg; padding: var(--sp-12) var(--sp-20); }
+.hero-collage-card--rating { top: -5%; left: -7%; rotate: -4deg; padding: var(--sp-12) var(--sp-24); }
 .hero-collage-card--rating .hero-card-figure { font-size: var(--fs-40); }
 .hero-collage-card--since { bottom: 7%; right: -7%; rotate: -1deg; }
 .hero-collage-card--people { bottom: -6%; left: 12%; rotate: -3deg; flex-direction: row; align-items: center; gap: var(--sp-12); }
