@@ -452,10 +452,15 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   .hero-slide--3 { animation-delay: 8s; }
   .hero-slide--4 { animation-delay: 12s; }
 }
+/* El hueco de fundido (6.25% -> 25%) de una diapositiva coincide EXACTAMENTE con el de
+   entrada (0% -> 6.25%) de la siguiente (ambas a 4s de distancia real): mientras una se
+   apaga la otra ya se está encendiendo encima, un cruce real en vez de dos fundidos
+   consecutivos con un hueco en medio. */
 @keyframes heroSlideCycle {
-  0%, 100% { opacity: 0; }
-  3%, 22% { opacity: 1; }
-  25% { opacity: 0; }
+  0% { opacity: 0; }
+  6.25% { opacity: 1; }
+  25% { opacity: 1; }
+  31.25%, 100% { opacity: 0; }
 }
 .hero-collage-card {
   position: absolute;
