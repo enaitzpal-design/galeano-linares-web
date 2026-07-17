@@ -67,23 +67,28 @@ function navHtml(lang, slugForActive) {
   return items.map((it) => `<a href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}>${it.label}</a>`).join('\n      ');
 }
 
-// El menú móvil sí lista los 4 servicios (hay espacio de sobra a pantalla completa) para
-// que se puedan explorar directamente sin pasar antes por la home.
+// El menú móvil sí lista los 4 servicios (hay espacio de sobra en la lámina) para que se
+// puedan explorar directamente sin pasar antes por la home. Cada fila lleva --i (orden de
+// aparición escalonada) y una numeración en mono (01…09) como detalle de "craft".
 function mobileNavLinksHtml(lang, slugForActive) {
   const t = UI[lang].nav;
-  const top = [
-    { href: pagePath(lang), label: t.home, key: '' },
-  ];
-  const services = SERVICES.map((s) => ({ href: pagePath(lang, s.slug), label: s.name[lang], key: s.slug }));
-  const rest = [
+  let row = 0;
+  let num = 0;
+  const link = (it, sub) => {
+    num += 1;
+    return `<a class="mobile-nav-link${sub ? ' mobile-nav-link--sub' : ''}" style="--i:${row++}" href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}><span class="mobile-nav-num">${String(num).padStart(2, '0')}</span><span class="mobile-nav-text">${it.label}</span>${icon('chevron', 'mobile-nav-chevron')}</a>`;
+  };
+  const group = (label) => `<span class="mobile-nav-group" style="--i:${row++}">${label}</span>`;
+  const parts = [link({ href: pagePath(lang), label: t.home, key: '' })];
+  parts.push(group(t.services));
+  SERVICES.forEach((s) => parts.push(link({ href: pagePath(lang, s.slug), label: s.name[lang], key: s.slug }, true)));
+  [
     { href: `${pagePath(lang)}#zona`, label: t.zona, key: 'zona' },
     { href: pagePath(lang, 'opinions'), label: t.opinions, key: 'opinions' },
     { href: pagePath(lang, 'preguntes-frequents'), label: t.faq, key: 'preguntes-frequents' },
     { href: pagePath(lang, 'contacte'), label: t.contact, key: 'contacte' },
-  ];
-  return [...top, ...services, ...rest]
-    .map((it) => `<a href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}>${it.label}</a>`)
-    .join('\n      ');
+  ].forEach((it) => parts.push(link(it)));
+  return parts.join('\n      ');
 }
 
 function headerHtml(lang, slugForActive, otherLangPath) {
@@ -102,9 +107,8 @@ function headerHtml(lang, slugForActive, otherLangPath) {
       <div class="header-actions">
         <a class="lang-switch" href="${otherPath}" hreflang="${other.code}">${other.label}</a>
         <a class="btn btn--primary header-cta" href="${telLink()}">${icon('phone')}${t.cta.callShort}</a>
-        <button class="nav-toggle" aria-label="Obrir menú" aria-expanded="false" data-menu-toggle>
-          ${icon('menu', 'icon-menu')}
-          ${icon('close', 'icon-close')}
+        <button class="nav-toggle" aria-label="Menú" aria-expanded="false" aria-controls="mobile-nav" data-menu-toggle>
+          <span class="nav-toggle-lines" aria-hidden="true"><span></span><span></span><span></span></span>
         </button>
       </div>
     </div>
@@ -113,12 +117,20 @@ function headerHtml(lang, slugForActive, otherLangPath) {
 
 // Fuera del <header>: el header tiene backdrop-filter, que crearía un containing block
 // para un descendiente position:fixed y le rompería el alto (bug detectado en QA visual).
+// No es una pantalla completa sino una lámina que baja desde el header sobre un fondo
+// atenuado: la página sigue visible detrás (y se vuelve a ella tocando fuera), dejando
+// claro que el menú es un atajo — las secciones también se recorren con scroll normal.
 function mobileNavHtml(lang, slugForActive) {
   const t = UI[lang];
-  return `<div class="mobile-nav" data-mobile-nav>
-    ${mobileNavLinksHtml(lang, slugForActive)}
-    <a class="btn btn--primary btn--block" href="${telLink()}">${icon('phone')}${t.cta.call}</a>
-    <a class="btn btn--whatsapp btn--block" style="margin-top:12px" href="${waLink(lang === 'es' ? 'Hola, os escribo desde la web. ' : 'Hola, us escric des de la web. ')}">${icon('whatsapp')}${t.cta.whatsapp}</a>
+  return `<div class="mobile-nav" id="mobile-nav" data-mobile-nav aria-hidden="true">
+    <div class="mobile-nav-backdrop" data-menu-backdrop></div>
+    <nav class="mobile-nav-sheet" aria-label="${lang === 'es' ? 'Menú principal' : 'Menú principal'}">
+      ${mobileNavLinksHtml(lang, slugForActive)}
+      <div class="mobile-nav-ctas" style="--i:10">
+        <a class="btn btn--primary" href="${telLink()}">${icon('phone')}${t.cta.callShort}</a>
+        <a class="btn btn--whatsapp" href="${waLink(lang === 'es' ? 'Hola, os escribo desde la web. ' : 'Hola, us escric des de la web. ')}">${icon('whatsapp')}${t.cta.waShort}</a>
+      </div>
+    </nav>
   </div>`;
 }
 

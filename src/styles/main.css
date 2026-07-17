@@ -330,32 +330,154 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   color: var(--tinta);
 }
 @media (min-width: 1280px) { .nav-toggle { display: none; } }
-.nav-toggle .icon-close { display: none; }
-.nav-toggle[aria-expanded="true"] .icon-menu { display: none; }
-.nav-toggle[aria-expanded="true"] .icon-close { display: block; }
 
+/* Hamburguesa de 3 líneas que se transforma en una X (en vez de intercambiar dos SVG):
+   la transición es continua y acompaña la apertura de la lámina. */
+.nav-toggle-lines { position: relative; display: block; width: 20px; height: 14px; }
+.nav-toggle-lines span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 0.35s var(--ease-standard), opacity 0.2s var(--ease-standard), top 0.35s var(--ease-standard);
+}
+.nav-toggle-lines span:nth-child(1) { top: 0; }
+.nav-toggle-lines span:nth-child(2) { top: 6px; }
+.nav-toggle-lines span:nth-child(3) { top: 12px; }
+.nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(1) { top: 6px; transform: rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(2) { opacity: 0; transform: scaleX(0.4); }
+.nav-toggle[aria-expanded="true"] .nav-toggle-lines span:nth-child(3) { top: 6px; transform: rotate(-45deg); }
+
+/* ---------- Menú móvil ----------
+   Lámina de cristal que baja deslizándose desde detrás del header, sobre un fondo
+   atenuado que deja la página visible (tocar fuera cierra). Los enlaces entran en
+   cascada con un pequeño retardo por fila (--i, asignado en el HTML). */
 .mobile-nav {
   position: fixed;
-  inset: var(--header-h) 0 0 0;
-  background: var(--crema);
+  inset: 0;
   z-index: 90;
-  padding: var(--sp-24) var(--sp-16);
-  overflow-y: auto;
-  display: none;
+  visibility: hidden;
+  pointer-events: none;
+  /* mantiene el contenedor "vivo" hasta que terminan las transiciones de cierre */
+  transition: visibility 0s linear 0.45s;
 }
-.mobile-nav.is-open { display: block; }
-.mobile-nav a {
-  display: block;
-  padding: var(--sp-16) 0;
+.mobile-nav.is-open {
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+.mobile-nav-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(44, 32, 24, 0.42);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-standard);
+}
+.mobile-nav.is-open .mobile-nav-backdrop { opacity: 1; }
+.mobile-nav-sheet {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  /* deja siempre una franja de página visible (y tocable) entre la lámina y la barra
+     inferior — el menú es una capa sobre la página, no una pantalla que la sustituye */
+  max-height: calc(100vh - var(--mobile-bar-h) - 48px);
+  max-height: calc(100dvh - var(--mobile-bar-h) - 48px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: calc(var(--header-h) + var(--sp-4)) var(--sp-16) var(--sp-16);
+  background: rgba(250, 246, 238, 0.92);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  backdrop-filter: blur(24px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 24px 48px -12px rgba(44, 32, 24, 0.3);
+  transform: translateY(-104%);
+  transition: transform 0.5s var(--ease-standard);
+}
+.mobile-nav.is-open .mobile-nav-sheet { transform: translateY(0); }
+
+.mobile-nav-link,
+.mobile-nav-group,
+.mobile-nav-ctas {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s var(--ease-standard), transform 0.4s var(--ease-standard);
+}
+.mobile-nav.is-open .mobile-nav-link,
+.mobile-nav.is-open .mobile-nav-group,
+.mobile-nav.is-open .mobile-nav-ctas {
+  opacity: 1;
+  transform: none;
+  /* cascada solo a la entrada; a la salida (regla base, sin delay) se desvanecen a la vez */
+  transition-delay: calc(0.08s + var(--i, 0) * 0.04s);
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+  padding: var(--sp-8);
   font-family: var(--font-display);
   font-size: var(--fs-24);
   font-weight: 700;
+  line-height: 1.2;
   color: var(--tinta);
   text-decoration: none;
-  border-bottom: 1px solid rgba(44,32,24,0.08);
+  border-bottom: 1px solid rgba(44, 32, 24, 0.08);
 }
-.mobile-nav .btn { margin-top: var(--sp-24); }
+.mobile-nav-link:active { background: rgba(197, 106, 60, 0.08); }
+.mobile-nav-link--sub { font-size: var(--fs-18); font-weight: 600; padding: 11px var(--sp-8) 11px var(--sp-16); }
+.mobile-nav-link[aria-current="page"] .mobile-nav-text { color: var(--terracota-oscuro); }
+.mobile-nav-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--terracota-link);
+  flex: none;
+}
+.mobile-nav-text { min-width: 0; }
+.mobile-nav-chevron { margin-left: auto; width: 1em; height: 1em; color: var(--terracota-oscuro); opacity: 0.55; }
+.mobile-nav-group {
+  display: block;
+  margin-top: var(--sp-8);
+  padding: var(--sp-4) var(--sp-8);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+}
+/* En móvil la barra fija inferior ya ofrece Trucar/WhatsApp justo debajo de la lámina:
+   los botones dentro del menú solo aparecen donde esa barra no existe (>=1024px). */
+.mobile-nav-ctas { display: none; }
+@media (min-width: 1024px) {
+  .mobile-nav-ctas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-12);
+    margin-top: var(--sp-24);
+  }
+}
+
+/* Bloqueo de scroll mientras el menú está abierto — por clase (main.js), nunca con
+   estilos en línea: pageshow la limpia al volver desde bfcache y el scroll de la
+   página no puede quedarse atascado. */
+html.menu-open, html.menu-open body { overflow: hidden; }
+
 @media (min-width: 1280px) { .mobile-nav { display: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav,
+  .mobile-nav-backdrop,
+  .mobile-nav-sheet,
+  .mobile-nav-link,
+  .mobile-nav-group,
+  .mobile-nav-ctas,
+  .nav-toggle-lines span { transition: none !important; }
+}
 
 /* ---------- Hero ---------- */
 .hero { position: relative; padding: var(--sp-48) 0 var(--sp-64); }

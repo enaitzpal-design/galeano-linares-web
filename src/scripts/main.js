@@ -19,18 +19,43 @@
   var toggle = document.querySelector('[data-menu-toggle]');
   var mobileNav = document.querySelector('[data-mobile-nav]');
   if (toggle && mobileNav) {
+    var setMenu = function (open) {
+      mobileNav.classList.toggle('is-open', open);
+      mobileNav.setAttribute('aria-hidden', String(!open));
+      toggle.setAttribute('aria-expanded', String(open));
+      // Bloqueo de scroll por clase (definida en CSS), no con estilo en línea: así un
+      // cierre que no llegue a ejecutarse (bfcache, rotación...) nunca deja la página
+      // sin scroll — pageshow y el media query de escritorio lo limpian siempre.
+      document.documentElement.classList.toggle('menu-open', open);
+    };
     toggle.addEventListener('click', function () {
-      var isOpen = mobileNav.classList.toggle('is-open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+      setMenu(!mobileNav.classList.contains('is-open'));
+    });
+    var backdrop = mobileNav.querySelector('[data-menu-backdrop]');
+    if (backdrop) {
+      backdrop.addEventListener('click', function () { setMenu(false); });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && mobileNav.classList.contains('is-open')) {
+        setMenu(false);
+        toggle.focus();
+      }
     });
     mobileNav.querySelectorAll('a').forEach(function (a) {
-      a.addEventListener('click', function () {
-        mobileNav.classList.remove('is-open');
-        toggle.setAttribute('aria-expanded', 'false');
-        document.body.style.overflow = '';
-      });
+      a.addEventListener('click', function () { setMenu(false); });
     });
+    // Al volver desde bfcache el DOM se restaura tal cual quedó: cerrar siempre.
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) setMenu(false);
+    });
+    // Si el viewport pasa a escritorio (rotación/redimensión) el menú deja de existir
+    // visualmente: soltar también el bloqueo de scroll.
+    if (window.matchMedia) {
+      var desktopMq = window.matchMedia('(min-width: 1280px)');
+      var onDesktop = function (mq) { if (mq.matches) setMenu(false); };
+      if (desktopMq.addEventListener) desktopMq.addEventListener('change', onDesktop);
+      else if (desktopMq.addListener) desktopMq.addListener(onDesktop);
+    }
   }
 
   // ---------- Banner de cookies (RGPD — solo cookies técnicas, brief §9) ----------
