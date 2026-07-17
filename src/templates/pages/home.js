@@ -34,7 +34,7 @@ function renderHome(lang) {
   <section class="trust-strip">
     <div class="container">
       <div class="trust-grid">
-        <div class="trust-item"><span class="num" data-counter data-count-to="4.8" data-suffix="★">0★</span><span class="label">${SITE.reviewCountDisplay} ${isEs ? 'reseñas de Google' : 'opinions de Google'}</span></div>
+        <div class="trust-item"><span class="num" data-counter data-count-to="4.8" data-suffix="★">4,8★</span><span class="label">${SITE.reviewCountDisplay} ${isEs ? 'reseñas de Google' : 'opinions de Google'}</span></div>
         <div class="trust-item"><span class="num" data-counter data-count-to="1988" data-format="plain">1988</span><span class="label">${isEs ? 'Desde' : 'Des de'}</span></div>
         <div class="trust-item"><span class="num" style="font-size:var(--fs-24)">${SITE.founders[0]}<br>${SITE.founders[1]}</span><span class="label">${isEs ? 'Los que cogen el teléfono' : 'Els que agafen el telèfon'}</span></div>
         <div class="trust-item"><span class="num" style="font-size:var(--fs-24)">${t.trustStrip.area}</span><span class="label">${isEs ? 'Zona de servicio' : 'Zona de servei'}</span></div>

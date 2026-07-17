@@ -964,7 +964,21 @@ body { padding-bottom: var(--mobile-bar-h); }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+/* Revelado al hacer scroll: el estado oculto SOLO se aplica bajo html.js-reveal (la
+   añade main.js cuando el IntersectionObserver está listo) — si el JS no corre o falla,
+   todo el contenido queda visible. --reveal-delay escalona los elementos de un grupo. */
 [data-reveal] { opacity: 1; }
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition:
+    opacity 0.7s var(--ease-standard) var(--reveal-delay, 0s),
+    transform 0.7s var(--ease-standard) var(--reveal-delay, 0s);
+}
+html.js-reveal [data-reveal].is-revealed { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html.js-reveal [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
 
 /* ---------- Fondo interactivo con el cursor ----------
    Un resplandor cálido muy sutil que sigue el ratón — nada de partículas ni parallax

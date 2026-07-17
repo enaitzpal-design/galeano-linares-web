@@ -1,6 +1,8 @@
 (function () {
   'use strict';
 
+  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // ---------- Splash de entrada (home, una vez por sesión) ----------
   var splash = document.querySelector('[data-intro-splash]');
   if (splash && !splash.classList.contains('is-hidden')) {
@@ -116,7 +118,6 @@
 
   // ---------- Resplandor que sigue el cursor — sutil, solo con ratón real ----------
   var glow = document.querySelector('[data-cursor-glow]');
-  var prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (glow && hasFinePointer && !prefersReducedMotion) {
     var glowTicking = false;
@@ -286,108 +287,87 @@
     });
   });
 
-  // ---------- Animaciones GSAP — discretas, al servicio de la calma (brief §10) ----------
-  if (window.gsap && window.ScrollTrigger) {
+  // ---------- Revelado de secciones al hacer scroll — IntersectionObserver ----------
+  // Antes dependía de GSAP + ScrollTrigger dentro de gsap.matchMedia() con una única
+  // condición (prefers-reduced-motion) que casi nunca se cumple: el callback no llegaba a
+  // ejecutarse y ni el revelado ni los contadores se creaban — y cuando sí se cumplía,
+  // podía dejar secciones ocultas. Ahora el estado oculto solo existe si el observer está
+  // listo (clase js-reveal en <html>) y cualquier fallo deja el contenido visible.
+  if ('IntersectionObserver' in window && !prefersReducedMotion) {
+    var revealEls = document.querySelectorAll('[data-reveal]');
+    if (revealEls.length) {
+      document.documentElement.classList.add('js-reveal');
+      // Cascada dentro de cada grupo (tarjetas, pasos, pueblos): retardo por posición
+      document.querySelectorAll('[data-reveal-group]').forEach(function (group) {
+        group.querySelectorAll('[data-reveal]').forEach(function (el, i) {
+          el.style.setProperty('--reveal-delay', (i * 0.12).toFixed(2) + 's');
+        });
+      });
+      var revealIo = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+            revealIo.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -12% 0px' });
+      revealEls.forEach(function (el) { revealIo.observe(el); });
+    }
+  }
+
+  // ---------- Contadores de la franja de confianza (4,8★ / 1988) ----------
+  // El valor final ya viene en el HTML: la animación solo lo re-cuenta al entrar en
+  // pantalla. Sin observer o con reduced-motion, se queda el valor final — nunca un "0★".
+  document.querySelectorAll('[data-counter]').forEach(function (el) {
+    var to = parseFloat(el.getAttribute('data-count-to'));
+    var suffix = el.getAttribute('data-suffix') || '';
+    var decimals = to % 1 !== 0;
+    var fmt = function (v) { return (decimals ? v.toFixed(1).replace('.', ',') : String(Math.round(v))) + suffix; };
+    el.textContent = fmt(to);
+    if (prefersReducedMotion || !('IntersectionObserver' in window)) return;
+    var counterIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        counterIo.disconnect();
+        var start = null;
+        var stepCount = function (ts) {
+          if (start === null) start = ts;
+          var p = Math.min(1, (ts - start) / 1400);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = fmt(to * eased);
+          if (p < 1) requestAnimationFrame(stepCount);
+        };
+        requestAnimationFrame(stepCount);
+      });
+    }, { rootMargin: '0px 0px -10% 0px' });
+    counterIo.observe(el);
+  });
+
+  // ---------- Parallax decorativo (GSAP) — colage del hero y manchas de fondo ----------
+  // Solo efectos prescindibles: si el CDN no carga o hay reduced-motion, no se pierde
+  // ningún contenido (el revelado y los contadores ya no dependen de GSAP).
+  if (window.gsap && window.ScrollTrigger && !prefersReducedMotion) {
     gsap.registerPlugin(ScrollTrigger);
 
-    var mm = gsap.matchMedia();
-    mm.add(
-      { reduceMotion: '(prefers-reduced-motion: reduce)' },
-      function (context) {
-        var reduceMotion = context.conditions.reduceMotion;
-        var dur = reduceMotion ? 0 : 0.7;
+    // Paralaje sutil del colage del hero: se desplaza más despacio que el scroll,
+    // dando sensación de profundidad mientras el hero desaparece de la vista.
+    var heroCollage = document.querySelector('.hero-collage');
+    if (heroCollage) {
+      gsap.to(heroCollage, {
+        y: 60,
+        ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+      });
+    }
 
-        // Revelado suave de secciones al hacer scroll: fundido + leve desplazamiento y
-        // "asentamiento" de escala (0.96 -> 1), para que se note que la sección reacciona
-        // al scroll sin que resulte un efecto forzado.
-        document.querySelectorAll('[data-reveal]').forEach(function (el) {
-          gsap.from(el, {
-            opacity: 0,
-            y: reduceMotion ? 0 : 24,
-            scale: reduceMotion ? 1 : 0.96,
-            duration: dur,
-            ease: 'power2.out',
-            scrollTrigger: { trigger: el, start: 'top 85%', once: true },
-          });
-        });
-
-        document.querySelectorAll('[data-reveal-group]').forEach(function (group) {
-          var items = group.querySelectorAll('[data-reveal]');
-          if (!items.length) return;
-          gsap.from(items, {
-            opacity: 0,
-            y: reduceMotion ? 0 : 24,
-            scale: reduceMotion ? 1 : 0.96,
-            duration: dur,
-            ease: 'power2.out',
-            stagger: reduceMotion ? 0 : 0.12,
-            scrollTrigger: { trigger: group, start: 'top 85%', once: true },
-          });
-        });
-
-        // Paralaje sutil del colage del hero: se desplaza más despacio que el scroll,
-        // dando sensación de profundidad mientras el hero desaparece de la vista.
-        if (!reduceMotion) {
-          var heroCollage = document.querySelector('.hero-collage');
-          if (heroCollage) {
-            gsap.to(heroCollage, {
-              y: 60,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: '.hero',
-                start: 'top top',
-                end: 'bottom top',
-                scrub: true,
-              },
-            });
-          }
-        }
-
-        // Parallax muy suave de las manchas de color de fondo — el mismo lenguaje que el
-        // colage del hero, para que las demás secciones no se sientan estáticas al lado.
-        if (!reduceMotion) {
-          document.querySelectorAll('.section-glow').forEach(function (el) {
-            gsap.fromTo(el, { '--blob-shift': '-30px' }, {
-              '--blob-shift': '30px',
-              ease: 'none',
-              scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
-            });
-          });
-        }
-
-        // Contadores de la franja de confianza (4,8 / 157 / 1988)
-        document.querySelectorAll('[data-counter]').forEach(function (el) {
-          var to = parseFloat(el.getAttribute('data-count-to'));
-          var suffix = el.getAttribute('data-suffix') || '';
-          var isPlain = el.getAttribute('data-format') === 'plain';
-          var decimals = to % 1 !== 0 ? 1 : 0;
-          if (reduceMotion) {
-            el.textContent = (decimals ? to.toFixed(1) : to) + suffix;
-            return;
-          }
-          var counter = { val: 0 };
-          gsap.to(counter, {
-            val: to,
-            duration: 1.4,
-            ease: 'power1.out',
-            scrollTrigger: { trigger: el, start: 'top 90%', once: true },
-            onUpdate: function () {
-              el.textContent = (decimals ? counter.val.toFixed(1) : Math.round(counter.val)) + suffix;
-            },
-          });
-        });
-
-        return function () {
-          ScrollTrigger.getAll().forEach(function (t) { t.kill(); });
-        };
-      }
-    );
-  } else {
-    // GSAP no disponible (offline o bloqueado) — mostrar contenido sin animar
-    document.querySelectorAll('[data-counter]').forEach(function (el) {
-      var to = parseFloat(el.getAttribute('data-count-to'));
-      var suffix = el.getAttribute('data-suffix') || '';
-      el.textContent = (to % 1 !== 0 ? to.toFixed(1) : to) + suffix;
+    // Parallax muy suave de las manchas de color de fondo — el mismo lenguaje que el
+    // colage del hero, para que las demás secciones no se sientan estáticas al lado.
+    document.querySelectorAll('.section-glow').forEach(function (el) {
+      gsap.fromTo(el, { '--blob-shift': '-30px' }, {
+        '--blob-shift': '30px',
+        ease: 'none',
+        scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true },
+      });
     });
   }
 })();
