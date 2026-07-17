@@ -1,0 +1,12 @@
+# Configuración de despliegue en Netlify: construye el sitio con el generador propio
+# y publica dist/. Con el sitio conectado a este repo de GitHub, cada push a main
+# se construye y publica solo — sin subir dist/ a mano.
+[build]
+  command = "node build.js"
+  publish = "dist"
+
+[build.environment]
+  # Las devDependencies (puppeteer/playwright, solo para QA local) intentan descargar
+  # navegadores enteros en npm install — innecesario para construir el sitio.
+  PUPPETEER_SKIP_DOWNLOAD = "true"
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
