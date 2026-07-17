@@ -195,6 +195,17 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   /* "Zona" es el único punto del menú que apunta a una sección de esta misma página (no
      tiene página propia): al activar su ancla se revela, en vez de ser un enlace muerto. */
   body.page-home > main > section:not(.hero):target { display: block; }
+  /* Con la home reducida, el hero (crema) choca directamente con el pie (tinta) creando un
+     corte duro. Se degrada esa frontera: el borde superior del pie se funde desde la crema
+     del hero hacia su marrón. Se añade hueco arriba para que el fundido quede por encima del
+     logo (texto claro), sin restarle contraste. rgba(250,246,238,0) = --crema transparente,
+     para que el degradado desaparezca sin virar a gris. */
+  body.page-home .site-footer {
+    padding-top: 104px;
+    background:
+      linear-gradient(to bottom, var(--crema) 0, rgba(250, 246, 238, 0) 88px) no-repeat,
+      var(--tinta);
+  }
 }
 
 .section-head { max-width: 640px; margin: 0 0 var(--sp-32); }
