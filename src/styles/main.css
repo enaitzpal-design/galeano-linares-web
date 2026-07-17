@@ -399,15 +399,15 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 }
 .mobile-nav.is-open .mobile-nav-sheet { transform: translateY(0); }
 
-.mobile-nav-link,
-.mobile-nav-group,
+.mobile-nav-sheet > .mobile-nav-link,
+.mobile-nav-acc,
 .mobile-nav-ctas {
   opacity: 0;
   transform: translateY(-10px);
   transition: opacity 0.3s var(--ease-standard), transform 0.4s var(--ease-standard);
 }
-.mobile-nav.is-open .mobile-nav-link,
-.mobile-nav.is-open .mobile-nav-group,
+.mobile-nav.is-open .mobile-nav-sheet > .mobile-nav-link,
+.mobile-nav.is-open .mobile-nav-acc,
 .mobile-nav.is-open .mobile-nav-ctas {
   opacity: 1;
   transform: none;
@@ -429,8 +429,54 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
   border-bottom: 1px solid rgba(44, 32, 24, 0.08);
 }
 .mobile-nav-link:active { background: rgba(197, 106, 60, 0.08); }
-.mobile-nav-link--sub { font-size: var(--fs-18); font-weight: 600; padding: 11px var(--sp-8) 11px var(--sp-16); }
 .mobile-nav-link[aria-current="page"] .mobile-nav-text { color: var(--terracota-oscuro); }
+
+/* Acordeón de servicios: la fila "Serveis" es un botón; el panel se despliega animando
+   grid-template-rows (0fr -> 1fr), que transiciona la altura sin necesidad de medirla. */
+.mobile-nav-acc-toggle {
+  width: 100%;
+  margin: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(44, 32, 24, 0.08);
+  cursor: pointer;
+  text-align: left;
+}
+.mobile-nav-acc-chevron { transition: transform 0.35s var(--ease-standard); }
+.mobile-nav-acc-toggle[aria-expanded="true"] .mobile-nav-acc-chevron { transform: rotate(90deg); opacity: 1; }
+.mobile-nav-sub {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.45s var(--ease-standard);
+}
+.mobile-nav-sub.is-expanded { grid-template-rows: 1fr; }
+.mobile-nav-sub-inner { overflow: hidden; min-height: 0; }
+.mobile-nav-sublink {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-12);
+  padding: 11px var(--sp-8) 11px var(--sp-24);
+  font-family: var(--font-display);
+  font-size: var(--fs-18);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--tinta);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(44, 32, 24, 0.08);
+}
+.mobile-nav-sublink::before {
+  /* mismo rombo que .eyebrow, en miniatura — marca de "hijo de Serveis" */
+  content: '';
+  width: 5px;
+  height: 5px;
+  flex: none;
+  background: var(--terracota-oscuro);
+  border-radius: 1px;
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+.mobile-nav-sublink:active { background: rgba(197, 106, 60, 0.08); }
+.mobile-nav-sublink[aria-current="page"] { color: var(--terracota-oscuro); }
 .mobile-nav-num {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -440,17 +486,6 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 }
 .mobile-nav-text { min-width: 0; }
 .mobile-nav-chevron { margin-left: auto; width: 1em; height: 1em; color: var(--terracota-oscuro); opacity: 0.55; }
-.mobile-nav-group {
-  display: block;
-  margin-top: var(--sp-8);
-  padding: var(--sp-4) var(--sp-8);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--tinta-suave);
-}
 /* En móvil la barra fija inferior ya ofrece Trucar/WhatsApp justo debajo de la lámina:
    los botones dentro del menú solo aparecen donde esa barra no existe (>=1024px). */
 .mobile-nav-ctas { display: none; }
@@ -474,7 +509,9 @@ html.menu-open, html.menu-open body { overflow: hidden; }
   .mobile-nav-backdrop,
   .mobile-nav-sheet,
   .mobile-nav-link,
-  .mobile-nav-group,
+  .mobile-nav-acc,
+  .mobile-nav-sub,
+  .mobile-nav-acc-chevron,
   .mobile-nav-ctas,
   .nav-toggle-lines span { transition: none !important; }
 }

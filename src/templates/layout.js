@@ -67,21 +67,33 @@ function navHtml(lang, slugForActive) {
   return items.map((it) => `<a href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}>${it.label}</a>`).join('\n      ');
 }
 
-// El menú móvil sí lista los 4 servicios (hay espacio de sobra en la lámina) para que se
-// puedan explorar directamente sin pasar antes por la home. Cada fila lleva --i (orden de
-// aparición escalonada) y una numeración en mono (01…09) como detalle de "craft".
+// El menú móvil agrupa los 4 servicios en un acordeón bajo "Serveis": tocar la fila
+// despliega el submenú (animado con grid-template-rows en CSS). Si ya estás en una página
+// de servicio, se renderiza desplegado y con el servicio actual marcado. Cada fila de
+// primer nivel lleva --i (cascada de entrada) y numeración en mono (01…06).
 function mobileNavLinksHtml(lang, slugForActive) {
   const t = UI[lang].nav;
   let row = 0;
   let num = 0;
-  const link = (it, sub) => {
+  const link = (it) => {
     num += 1;
-    return `<a class="mobile-nav-link${sub ? ' mobile-nav-link--sub' : ''}" style="--i:${row++}" href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}><span class="mobile-nav-num">${String(num).padStart(2, '0')}</span><span class="mobile-nav-text">${it.label}</span>${icon('chevron', 'mobile-nav-chevron')}</a>`;
+    return `<a class="mobile-nav-link" style="--i:${row++}" href="${it.href}"${it.key === slugForActive ? ' aria-current="page"' : ''}><span class="mobile-nav-num">${String(num).padStart(2, '0')}</span><span class="mobile-nav-text">${it.label}</span>${icon('chevron', 'mobile-nav-chevron')}</a>`;
   };
-  const group = (label) => `<span class="mobile-nav-group" style="--i:${row++}">${label}</span>`;
+  const servicesAccordion = () => {
+    num += 1;
+    const expanded = SERVICES.some((s) => s.slug === slugForActive);
+    const subLinks = SERVICES.map((s) => `<a class="mobile-nav-sublink" href="${pagePath(lang, s.slug)}"${s.slug === slugForActive ? ' aria-current="page"' : ''}>${s.name[lang]}</a>`).join('\n          ');
+    return `<div class="mobile-nav-acc" style="--i:${row++}">
+        <button class="mobile-nav-link mobile-nav-acc-toggle" type="button" aria-expanded="${expanded}" aria-controls="mobile-nav-sub" data-services-toggle><span class="mobile-nav-num">${String(num).padStart(2, '0')}</span><span class="mobile-nav-text">${t.services}</span>${icon('chevron', 'mobile-nav-chevron mobile-nav-acc-chevron')}</button>
+        <div class="mobile-nav-sub${expanded ? ' is-expanded' : ''}" id="mobile-nav-sub" data-services-panel>
+          <div class="mobile-nav-sub-inner">
+          ${subLinks}
+          </div>
+        </div>
+      </div>`;
+  };
   const parts = [link({ href: pagePath(lang), label: t.home, key: '' })];
-  parts.push(group(t.services));
-  SERVICES.forEach((s) => parts.push(link({ href: pagePath(lang, s.slug), label: s.name[lang], key: s.slug }, true)));
+  parts.push(servicesAccordion());
   [
     { href: `${pagePath(lang)}#zona`, label: t.zona, key: 'zona' },
     { href: pagePath(lang, 'opinions'), label: t.opinions, key: 'opinions' },
@@ -126,7 +138,7 @@ function mobileNavHtml(lang, slugForActive) {
     <div class="mobile-nav-backdrop" data-menu-backdrop></div>
     <nav class="mobile-nav-sheet" aria-label="${lang === 'es' ? 'Menú principal' : 'Menú principal'}">
       ${mobileNavLinksHtml(lang, slugForActive)}
-      <div class="mobile-nav-ctas" style="--i:10">
+      <div class="mobile-nav-ctas" style="--i:6">
         <a class="btn btn--primary" href="${telLink()}">${icon('phone')}${t.cta.callShort}</a>
         <a class="btn btn--whatsapp" href="${waLink(lang === 'es' ? 'Hola, os escribo desde la web. ' : 'Hola, us escric des de la web. ')}">${icon('whatsapp')}${t.cta.waShort}</a>
       </div>

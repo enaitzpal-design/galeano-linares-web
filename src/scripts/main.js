@@ -44,6 +44,27 @@
     mobileNav.querySelectorAll('a').forEach(function (a) {
       a.addEventListener('click', function () { setMenu(false); });
     });
+    // Acordeón de "Serveis": despliega/pliega el submenú de servicios
+    var servicesToggle = mobileNav.querySelector('[data-services-toggle]');
+    var servicesPanel = mobileNav.querySelector('[data-services-panel]');
+    if (servicesToggle && servicesPanel) {
+      servicesToggle.addEventListener('click', function () {
+        var expand = !servicesPanel.classList.contains('is-expanded');
+        servicesPanel.classList.toggle('is-expanded', expand);
+        servicesToggle.setAttribute('aria-expanded', String(expand));
+      });
+    }
+    // iOS Safari ignora overflow:hidden para el gesto táctil: con el menú abierto, la
+    // página de detrás se podía seguir arrastrando hasta otras secciones. Se cancela el
+    // touchmove que no ocurre dentro de la lámina (o el de la lámina cuando no tiene
+    // nada propio que desplazar), dejando quieta la página hasta cerrar el menú.
+    var sheet = mobileNav.querySelector('.mobile-nav-sheet');
+    document.addEventListener('touchmove', function (e) {
+      if (!mobileNav.classList.contains('is-open')) return;
+      if (!sheet || !sheet.contains(e.target) || sheet.scrollHeight <= sheet.clientHeight) {
+        e.preventDefault();
+      }
+    }, { passive: false });
     // Al volver desde bfcache el DOM se restaura tal cual quedó: cerrar siempre.
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) setMenu(false);
