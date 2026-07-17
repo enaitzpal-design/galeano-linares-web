@@ -249,7 +249,7 @@ function renderPage({ lang, slugForActive, title, description, canonicalPath, al
 <head>
 ${headHtml({ lang, title, description, canonicalPath, alternates, jsonLdList, ogImage })}
 </head>
-<body>
+<body${isHome ? ' class="page-home"' : ''}>
   ${isHome ? introSplashHtml() : ''}
   <div class="cursor-glow" data-cursor-glow aria-hidden="true"></div>
   <a class="skip-link" href="#main">${UI[lang].skipToContent}</a>

@@ -185,6 +185,18 @@ a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
 }
 @media (min-width: 768px) { .section { padding: var(--sp-96) 0; } }
 
+/* ---------- Home en móvil: solo hero (el resto se alcanza por el menú desplegable) ----------
+   En el teléfono la portada se reduce a lo esencial —cabecera, hero y pie—; las demás
+   secciones (serveis, opinions, com treballem, zona, faq, contacte...) se ocultan y se
+   llegan desde el menú, que enlaza a sus páginas propias. Solo aplica a la home
+   (body.page-home): las páginas internas conservan todas sus secciones. */
+@media (max-width: 767px) {
+  body.page-home > main > section:not(.hero) { display: none; }
+  /* "Zona" es el único punto del menú que apunta a una sección de esta misma página (no
+     tiene página propia): al activar su ancla se revela, en vez de ser un enlace muerto. */
+  body.page-home > main > section:not(.hero):target { display: block; }
+}
+
 .section-head { max-width: 640px; margin: 0 0 var(--sp-32); }
 .section-head--center { margin-inline: auto; text-align: center; }
 
